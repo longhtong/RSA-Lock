@@ -1,8 +1,8 @@
 import encryption as en
 import decryption as de
 import Utils as utils
-lowerBound = 1e189
-upperBound = 9e189
+lowerBound = 1e259 #RSA-260 
+upperBound = 9e259
 print(en.encrypt(13, 55, 3))
 print(de.decrypt(en.encrypt(13, 55, 3),3,5,11))
 #print(utils.getPrime(3))
