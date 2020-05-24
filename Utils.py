@@ -31,7 +31,7 @@ def largest2Power(n):
 #https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test
 #http://cacr.uwaterloo.ca/hac/about/chap4.pdf
 def MillerRabinPrime(n, other):
-    limit = 7
+    limit = 7 #increase for better security
     #Get the largest 2^x factor that divides randNum
     twoPowerResult = largest2Power(n - 1)
     s = twoPowerResult[1]
@@ -59,7 +59,9 @@ def getCoPrime(n):
         result = random.randrange(2, 100)
         if egcd(result, n)[0] == 1:
             return result
-        
+def getFirstDigits(n):
+    strN = str(n)
+    return int(strN[0:3])        
 
   
 

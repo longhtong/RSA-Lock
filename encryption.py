@@ -5,6 +5,7 @@
 def encrypt(NumMess, N, e):
     if N == 0:
         raise TypeError("Invalid N value.")
-    return (NumMess**e) % N
+    return pow(NumMess, e, N)
+    #(NumMess**e) % N
     
 

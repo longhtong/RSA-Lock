@@ -5,4 +5,5 @@ from egcd import egcd
 #p, q: prime numbers
 def decrypt(enMess, e, p, q):
     inversedE = egcd(e, (p-1)*(q-1))[1] % ((p-1)*(q-1))
-    return (enMess**inversedE) % (p*q)
+    return pow(enMess, inversedE, p*q)
+    #(enMess**inversedE) % (p*q)
