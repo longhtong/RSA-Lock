@@ -11,3 +11,4 @@ x=144825369822936801044043473171552743690744460361947564378843661717824975577263
 #print(utils.miillerTest(x))
 #print(utils.MillerRabinPrime(x, -1))
 print(utils.getPrime(x, lowerBound, upperBound))
+print(utils.getCoPrime(40))
