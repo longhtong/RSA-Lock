@@ -59,9 +59,11 @@ def getCoPrime(n):
         result = random.randrange(2, 100)
         if egcd(result, n)[0] == 1:
             return result
-def getFirstDigits(n):
+def getFirstDigits(n, stop):
     strN = str(n)
-    return int(strN[0:3])        
+    return int(strN[0:stop])
+def getNumLength(n):
+    return len(str(n))        
 
   
 
