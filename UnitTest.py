@@ -4,7 +4,8 @@ import Utils as utils
 import rsa as rsa
 lowerBound = 1e259 #RSA-260 
 upperBound = 9.9999999999999999999999999999999999e259
-
+path = "/home/jack/Desktop/RSATesting.txt"
+pathOut = "/home/jack/Desktop"
 def basicTest():
     print(en.encrypt(51, 55, 3))
     print(de.decrypt(en.encrypt(1, 55, 3),3,5,11))
@@ -17,7 +18,7 @@ def basicTest():
     #print(utils.getCoPrime(40))
 def RSAObjTest():
     rsaTest = rsa.RSAObj.newUser()
-    rsaTest.getMessage("H")
+    rsaTest.getMessage("Hello FRiend!!! HOw are you today? Would you like somebread? The USSR is coming")
     encrypted = rsaTest.encrypteMess()
     print(encrypted)
 
@@ -25,6 +26,20 @@ def RSAObjTest():
     rsaTest.getMessage(encrypted)
     decryptedMess = rsaTest.decrypteMess()
     print(decryptedMess)
+def RSAFileTest():
+    rsaTest = rsa.RSAObj.newUser()
+    rsaTest.setPathIn(path)
+    content_noFile = rsaTest.encrypteFile()
+    print(content_noFile)
+    rsaTest.setPathOut(pathOut)
+    content_wFile = rsaTest.encrypteFile()
 
-RSAObjTest()
+    # newPath = "/home/jack/Desktop/ENCRYPTED FILE"
+    # rsaTest.setPathIn(newPath)
+    # rsaTest.decryptFile()
+    
+    
+
+#RSAObjTest()
 #basicTest()
+RSAFileTest()

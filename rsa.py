@@ -2,6 +2,7 @@ import Utils as u
 import encryption as en
 import decryption as de
 import random
+import os
 
 LOWERBOUND = 1e259 #RSA-260 
 UPPERBOUND = 9.99999999999999999999999999999999999999999999999999999999999999e259
@@ -15,7 +16,9 @@ class RSAObj(object):
         self.N = N
         self.e = e
         self.message = None
-        self.filePath = None
+        self.filePathIn = None
+        self.filePathOut = None
+        self.writeOut = False
 
     @classmethod
     def newUser(cls):
@@ -26,6 +29,10 @@ class RSAObj(object):
     
     def getMessage(self, inputMess):
         self.message = inputMess
+    def setPathIn(self, path):
+        self.filePathIn = path
+    def setPathOut(self, path):
+        self.filePathOut = path
 
     def encrypteMess(self):
         result = ""
@@ -49,3 +56,57 @@ class RSAObj(object):
             letterNum = de.decrypt(letterNum, self.e, self.p, self.q)
             result += chr(letterNum)
         return result
+
+    def encrypteFile(self):
+        if self.filePathIn == None:
+            raise Exception("No File Path Provided!")
+        if not os.path.isfile(self.filePathIn):
+            raise Exception("Invalid File Path!")
+        if os.path.getsize(self.filePathIn) == 0:
+            raise Exception("Empty File!")
+
+        with open(self.filePathIn, "r") as ufile:
+            result = ""
+            while True:
+                line = ufile.readline()
+                if line == "":
+                    break
+                self.message = line
+                result = result + self.encrypteMess()
+        if self.filePathOut == None:
+            return result
+        else:
+            newPath = os.path.join(self.filePathOut, "ENCRYPTED FILE")
+            with open(newPath, "w") as fileOut:
+                subsets = result.split(self.delimiter)
+                for num in subsets:
+                    if num == "":
+                        break
+                    fileOut.write(num + self.delimiter + "\n")
+    
+    def decryptFile(self):
+        if self.filePathIn == None:
+            raise Exception("No File Path Provided!")
+        if not os.path.isfile(self.filePathIn):
+            raise Exception("Invalid File Path!")
+        if os.path.getsize(self.filePathIn) == 0:
+            raise Exception("Empty File!")
+
+        with open(self.filePathIn, "r") as ufile:
+            result = ""
+            counter = 1
+            while True:
+                line = ufile.readline()
+                if line == "":
+                    break
+                self.message = line
+                result = result + self.decrypteMess()
+                
+        if self.filePathOut == None:
+            return result
+        else:
+            newPath = os.path.join(self.filePathOut, "DECRYPTED FILE")
+            with open(newPath, "w") as fileOut:
+                print(result, file = fileOut)
+    
+
