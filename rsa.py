@@ -46,11 +46,13 @@ class RSAObj(object):
         breaker = ((self.N % 10000) % self.e) + u.getCoPrime(self.N * self.e + 662)
         subsets = self.message.split(self.delimiter)
         result = ""
-
+        #print(subsets)
         for letter in subsets:
-            if letter == "":
+            if letter == "" or letter == "\n":
                 break
-            letterNum = int(letter)
+            #print(letter)
+            letterNum = int(letter.strip())
+            #print(letterNum)
             securityLen = u.getNumLength(breaker + u.getFirstDigits(letterNum, self.securityDigits))
             letterNum = letterNum // (10**securityLen)
             letterNum = de.decrypt(letterNum, self.e, self.p, self.q)
@@ -82,7 +84,8 @@ class RSAObj(object):
                 for num in subsets:
                     if num == "":
                         break
-                    fileOut.write(num + self.delimiter + "\n")
+                    fileOut.write(num + self.delimiter)
+                    fileOut.write("\n")
     
     def decryptFile(self):
         if self.filePathIn == None:
@@ -94,12 +97,12 @@ class RSAObj(object):
 
         with open(self.filePathIn, "r") as ufile:
             result = ""
-            counter = 1
             while True:
                 line = ufile.readline()
                 if line == "":
                     break
-                self.message = line
+                self.message = str(line)
+                #print(type(self.message))
                 result = result + self.decrypteMess()
                 
         if self.filePathOut == None:
@@ -107,6 +110,10 @@ class RSAObj(object):
         else:
             newPath = os.path.join(self.filePathOut, "DECRYPTED FILE")
             with open(newPath, "w") as fileOut:
-                print(result, file = fileOut)
+                subsets = result.split(self.delimiter)
+                for num in subsets:
+                    if num == "":
+                        break
+                    fileOut.write(num + self.delimiter + "\n")
     
 
