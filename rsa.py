@@ -18,7 +18,7 @@ class RSAObj(object):
         self.message = None
         self.filePathIn = None
         self.filePathOut = None
-        self.writeOut = False
+        self.binary = False
 
     @classmethod
     def newUser(cls):
@@ -33,6 +33,8 @@ class RSAObj(object):
         self.filePathIn = path
     def setPathOut(self, path):
         self.filePathOut = path
+    def setBinaryOn(self):
+        self.binary = True
 
     def encrypteMess(self):
         result = ""
@@ -67,7 +69,13 @@ class RSAObj(object):
         if os.path.getsize(self.filePathIn) == 0:
             raise Exception("Empty File!")
 
-        with open(self.filePathIn, "r") as ufile:
+        readAccess = "r"
+        writeAccess = "w"
+        if self.binary:
+            readAccess = "r+"
+            writeAccess = "w+"
+            
+        with open(self.filePathIn, readAccess) as ufile:
             result = ""
             while True:
                 line = ufile.readline()
@@ -78,8 +86,8 @@ class RSAObj(object):
         if self.filePathOut == None:
             return result
         else:
-            newPath = os.path.join(self.filePathOut, "ENCRYPTED FILE")
-            with open(newPath, "w") as fileOut:
+            newPath = os.path.join(self.filePathOut, "ENCRYPTED_FILE")
+            with open(newPath, writeAccess) as fileOut:
                 subsets = result.split(self.delimiter)
                 for num in subsets:
                     if num == "":
@@ -94,8 +102,14 @@ class RSAObj(object):
             raise Exception("Invalid File Path!")
         if os.path.getsize(self.filePathIn) == 0:
             raise Exception("Empty File!")
+        
+        readAccess = "r"
+        writeAccess = "w"
+        if self.binary:
+            readAccess = "r+"
+            writeAccess = "w+"
 
-        with open(self.filePathIn, "r") as ufile:
+        with open(self.filePathIn, readAccess) as ufile:
             result = ""
             while True:
                 line = ufile.readline()
@@ -108,12 +122,11 @@ class RSAObj(object):
         if self.filePathOut == None:
             return result
         else:
-            newPath = os.path.join(self.filePathOut, "DECRYPTED FILE")
-            with open(newPath, "w") as fileOut:
-                subsets = result.split(self.delimiter)
-                for num in subsets:
-                    if num == "":
-                        break
-                    fileOut.write(num + self.delimiter + "\n")
-    
+            newPath = os.path.join(self.filePathOut, "DECRYPTED_FILE.txt")
+            with open(newPath, writeAccess) as fileOut:
+                fileOut.writelines(result)
+    def getFileType(self):
+        pass
+
+
 

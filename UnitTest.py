@@ -35,10 +35,11 @@ def RSAFileTest():
     
     # rsaTest.setPathOut(pathOut)
     # content_wFile = rsaTest.encrypteFile()
-
+    print(rsaTest.encrypteFile())
     newPath = "/home/jack/Desktop/ENCRYPTED FILE"
     rsaTest.setPathIn(newPath)
-    rsaTest.setPathOut(None)
+    rsaTest.setPathOut(pathOut)
+    rsaTest.setBinaryOn()
     print(rsaTest.decryptFile())
     
     # content_noFile = rsaTest.encrypteFile()
