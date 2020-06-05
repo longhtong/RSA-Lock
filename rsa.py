@@ -3,6 +3,7 @@ import encryption as en
 import decryption as de
 import random
 import os
+from egcd import egcd
 
 LOWERBOUND = 1e259 #RSA-260 
 UPPERBOUND = 9.99999999999999999999999999999999999999999999999999999999999999e259
@@ -26,7 +27,12 @@ class RSAObj(object):
         newQ = u.getPrime(newP, LOWERBOUND, UPPERBOUND)
         newE = u.getCoPrime((newP - 1) * (newQ - 1))
         return cls(newP, newQ, newP * newQ, newE)
-    
+    def getN(self):
+        return self.N
+    def getE(self):
+        return self.e
+    def getD(self):
+        return egcd(self.e, (self.p-1)*(self.q-1))[1] % ((self.p-1)*(self.q-1))
     def getMessage(self, inputMess):
         self.message = inputMess
     def setPathIn(self, path):
