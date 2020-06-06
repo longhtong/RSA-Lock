@@ -68,8 +68,6 @@ def decryptStartingWindow():
             #open another window for encryption
             N = values["-N-"]
             d = values["-d-"]
-            # print(N, "RSA  \n")
-            # print(d,"e \n")
             window.close()
             decryptWindow(int(N), int(values["-e-"]), int(d))
             
@@ -133,7 +131,6 @@ def encryptWindow(N = None, e = None, dummy = None):
             window.close()
             break
         if event == "Encrypt Message":
-            print("EncryptMessage: \n")
             rsaEncrypt.getMessage(values["-MessIn-"])
             encryptedMess = rsaEncrypt.encrypteMess()
             layoutMess = [[sg.Multiline(default_text= encryptedMess)]]
@@ -161,8 +158,6 @@ def decryptWindow(N = None, e = None, d = None):
             window.close()
             break
         if event == "Decrypt Message":
-            print("Decrypt Message: \n")
-            print(values["-MessIn-"])
             rsaDecrypt.getMessage(values["-MessIn-"])
             decryptedMess = rsaDecrypt.decrypteMess()
             layoutMess = [[sg.Multiline(default_text= decryptedMess)]]
@@ -172,5 +167,5 @@ def decryptWindow(N = None, e = None, d = None):
             print("Decrypt FIle: \n")
             print(values["-FileName-"])
 
-            
+
 main()
