@@ -11,11 +11,12 @@ UPPERBOUND = 9.99999999999999999999999999999999999999999999999999999999999999e25
 class RSAObj(object):
     delimiter = "~"
     securityDigits = 3
-    def __init__(self, p = None, q = None, N = None, e = None):
+    def __init__(self, p = None, q = None, N = None, e = None, d = None):
         self.p = p
         self.q = q
         self.N = N
         self.e = e
+        self.d = d
         self.message = None
         self.filePathIn = None
         self.filePathOut = None
@@ -63,7 +64,7 @@ class RSAObj(object):
             #print(letterNum)
             securityLen = u.getNumLength(breaker + u.getFirstDigits(letterNum, self.securityDigits))
             letterNum = letterNum // (10**securityLen)
-            letterNum = de.decrypt(letterNum, self.e, self.p, self.q)
+            letterNum = de.decrypt(letterNum, self.e, self.p, self.q, self.d, self.N)
             result += chr(letterNum)
         return result
 
@@ -80,7 +81,8 @@ class RSAObj(object):
         if self.binary:
             readAccess = "r+"
             writeAccess = "w+"
-            
+        
+
         with open(self.filePathIn, readAccess) as ufile:
             result = ""
             while True:
@@ -92,7 +94,9 @@ class RSAObj(object):
         if self.filePathOut == None:
             return result
         else:
-            newPath = os.path.join(self.filePathOut, "ENCRYPTED_FILE")
+            #Process Filename
+            outputName = u.getFileName(self.filePathIn) + "_ENCRYPTED.txt"
+            newPath = os.path.join(self.filePathOut, outputName)
             with open(newPath, writeAccess) as fileOut:
                 subsets = result.split(self.delimiter)
                 for num in subsets:
@@ -128,11 +132,13 @@ class RSAObj(object):
         if self.filePathOut == None:
             return result
         else:
-            newPath = os.path.join(self.filePathOut, "DECRYPTED_FILE.txt")
+            #Process Filename
+            outputName = u.getFileName(self.filePathIn).split("_")[0] + "_DECRYPTED_FILE.txt"
+            print("\n " + outputName + "\n")
+            newPath = os.path.join(self.filePathOut, outputName)
             with open(newPath, writeAccess) as fileOut:
                 fileOut.writelines(result)
-    def getFileType(self):
-        pass
+
 
 
 

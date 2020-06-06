@@ -2,6 +2,9 @@ import random
 import decimal
 from egcd import egcd
 import math
+import ntpath
+import sys
+
 def ASCIIConvert(message):
     result = 0
     for i in range(len(message)):
@@ -63,7 +66,16 @@ def getFirstDigits(n, stop):
     strN = str(n)
     return int(strN[0:stop])
 def getNumLength(n):
-    return len(str(n))        
+    return len(str(n))
 
+#Credit: https://stackoverflow.com/questions/8384737/extract-file-name-from-path-no-matter-what-the-os-path-format
+#Original Author: Lauritz V. Thaulow      
+def getFileName(path):
+    if "\\" in path and sys.platform == "linux":
+        raise Exception("Potential Invalid Linux Path. File Cannot Be Processed.") 
+    head, tail = ntpath.split(path)
+    if head is None:
+        raise Exception("Please select a file.") 
+    return tail.split(".")[0]
   
 

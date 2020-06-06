@@ -46,13 +46,14 @@ def encryptStartingWindow():
             # print(N, "RSA  \n")
             # print(e,"e \n")
             window.close()
-            encryptWindow(N, e)
+            encryptWindow(int(N), int(e))
             
 def decryptStartingWindow():
     sg.theme('Dark Blue 3')
     layout = [  [sg.Text(text = "Please Enter Public Keys")],
-                [sg.Text(text = "RSA Key: "), sg.Input(key = "-N-")],
-                [sg.Text(text = "Private Key: "), sg.Input(key = "-d-")],
+                [sg.Text(text = "RSA Key: "), sg.Multiline(key = "-N-")],
+                [sg.Text(text = "Secondary Key: "), sg.Multiline(key = "-e-")],
+                [sg.Text(text = "Private Key: "), sg.Multiline(key = "-d-")],
                 [sg.Button('Submit')]]
 
     window = sg.Window('RSA Encryptor', layout)
@@ -70,7 +71,7 @@ def decryptStartingWindow():
             # print(N, "RSA  \n")
             # print(d,"e \n")
             window.close()
-            decryptWindow(N, None, d)
+            decryptWindow(int(N), int(values["-e-"]), int(d))
             
         
 #Provide 3 keys to user. Options to proceed to encryption or decryption       
@@ -107,7 +108,8 @@ def newUserWindow():
     elif event == "No":
         window.close() 
         window1.close() 
-        nextAction()
+        encryptStartingWindow()
+        #nextAction()
         print("NO and window and popup closed")
     elif event == sg.WIN_CLOSED or event == 'Exit':
         window.close() 
@@ -124,6 +126,7 @@ def encryptWindow(N = None, e = None, dummy = None):
                 [sg.In(key = "-FileName-"), sg.FileBrowse()],
                 [sg.B("Encrypt File")]]
     window = sg.Window('RSA Encryptor', layout)
+    rsaEncrypt = rsa.RSAObj(N = N, e = e, d = dummy)
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED or event == 'Exit':
@@ -131,7 +134,13 @@ def encryptWindow(N = None, e = None, dummy = None):
             break
         if event == "Encrypt Message":
             print("EncryptMessage: \n")
-            print(values["-MessIn-"])
+            rsaEncrypt.getMessage(values["-MessIn-"])
+            encryptedMess = rsaEncrypt.encrypteMess()
+            layoutMess = [[sg.Multiline(default_text= encryptedMess)]]
+            sg.Window('RSA Encryptor', layoutMess).read(close = True)
+            
+            
+
         elif event == "Encrypt File":
             print("Encrypte FIle: \n")
             print(values["-FileName-"])
@@ -145,6 +154,7 @@ def decryptWindow(N = None, e = None, d = None):
                 [sg.In(key = "-FileName-"), sg.FileBrowse()],
                 [sg.B("Decrypt File")]]
     window = sg.Window('RSA Encryptor', layout)
+    rsaDecrypt = rsa.RSAObj(N = N, e = e, d = d)
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED or event == 'Exit':
@@ -153,7 +163,14 @@ def decryptWindow(N = None, e = None, d = None):
         if event == "Decrypt Message":
             print("Decrypt Message: \n")
             print(values["-MessIn-"])
+            rsaDecrypt.getMessage(values["-MessIn-"])
+            decryptedMess = rsaDecrypt.decrypteMess()
+            layoutMess = [[sg.Multiline(default_text= decryptedMess)]]
+            sg.Window('RSA Encryptor', layoutMess).read(close = True)
+
         elif event == "Decrypt File":
             print("Decrypt FIle: \n")
             print(values["-FileName-"])
+
+            
 main()
