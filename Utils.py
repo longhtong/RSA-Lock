@@ -75,7 +75,12 @@ def getFileName(path):
         raise Exception("Potential Invalid Linux Path. File Cannot Be Processed.") 
     head, tail = ntpath.split(path)
     if head is None:
-        raise Exception("Please select a file.") 
-    return tail.split(".")[0]
+        raise Exception("Please select a file.")
+    fileName = tail
+    isTextFile = False
+    if ".txt" in fileName:
+        isTextFile = True
+    return (fileName.split(".")[0], isTextFile, head.split(tail)[0])
+    #tail.split(".")[0]
   
 

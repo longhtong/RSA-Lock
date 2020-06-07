@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import rsa as rsa
+from Utils import getFileName
 def main():
     sg.theme('Dark Blue 3')  # please make your windows colorful
 
@@ -27,8 +28,8 @@ def main():
 def encryptStartingWindow():
     sg.theme('Dark Blue 3')
     layout = [  [sg.Text(text = "Please Enter Public Keys")],
-                [sg.Text(text = "RSA Key: "), sg.Input(key = "-N-")],
-                [sg.Text(text = "Secondary Key: "), sg.Input(key = "-e-")],
+                [sg.Text(text = "RSA Key: "), sg.Multiline(key = "-N-")],
+                [sg.Text(text = "Secondary Key: "), sg.Multiline(key = "-e-")],
                 [sg.Button('Submit')]]
 
     window = sg.Window('RSA Encryptor', layout)
@@ -139,11 +140,21 @@ def encryptWindow(N = None, e = None, dummy = None):
             
 
         elif event == "Encrypt File":
-            print("Encrypte FIle: \n")
-            print(values["-FileName-"])
+            pathIn = values["-FileName-"]
+            fileName, isText, pathOut = getFileName(pathIn)
+
+            rsaEncrypt.setPathIn(pathIn)
+            rsaEncrypt.setPathOut(pathOut)
+            if not isText:
+                rsaEncrypt.setBinaryOn()
+            rsaEncrypt.encryptFile(fileName)
+
+            layoutMess = [[sg.Text("Encryption Successful!!!")]]
+            sg.Window('RSA Encryptor', layoutMess).read(close = True)
+
 def decryptWindow(N = None, e = None, d = None):
     sg.theme('Dark Blue 3')
-
+    
     layout = [[sg.T("Decrypt a Message")],
                 [sg.Multiline(key = "-MessIn-")],
                 [sg.B("Decrypt Message")],
@@ -164,8 +175,21 @@ def decryptWindow(N = None, e = None, d = None):
             sg.Window('RSA Encryptor', layoutMess).read(close = True)
 
         elif event == "Decrypt File":
-            print("Decrypt FIle: \n")
+            print("Decrypt FIleHEREEEE: \n")
             print(values["-FileName-"])
+            pathIn = values["-FileName-"]
+            fileName, isText, pathOut = getFileName(pathIn)
+            print(fileName)
+            print(isText)
+            print(pathOut)
+            rsaDecrypt.setPathIn(pathIn)
+            rsaDecrypt.setPathOut(pathOut)
+            if not isText:
+                rsaDecrypt.setBinaryOn()
+            rsaDecrypt.decryptFile(fileName)
+
+            layoutMess = [[sg.Text("Decryption Successful!!!")]]
+            sg.Window('RSA Encryptor', layoutMess).read(close = True)
 
 
 main()

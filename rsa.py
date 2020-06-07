@@ -45,14 +45,14 @@ class RSAObj(object):
 
     def encrypteMess(self):
         result = ""
-        breaker = ((self.N % 10000) % self.e) + u.getCoPrime(self.N * self.e + 662)    
+        breaker = (((self.N % 1000) % self.e) + (self.N * self.e + 662)) % 100      
         for i in self.message:
             numEn = en.encrypt(ord(i), self.N, self.e)
             result = result + str(numEn) + str(breaker + u.getFirstDigits(numEn, self.securityDigits)) + self.delimiter 
         return result
 
     def decrypteMess(self):
-        breaker = ((self.N % 10000) % self.e) + u.getCoPrime(self.N * self.e + 662)
+        breaker = (((self.N % 1000) % self.e) + (self.N * self.e + 662)) % 100   
         subsets = self.message.split(self.delimiter)
         result = ""
         #print(subsets)
@@ -60,15 +60,16 @@ class RSAObj(object):
             if letter == "" or letter == "\n":
                 break
             #print(letter)
-            letterNum = int(letter.strip())
+            letterNum = int(letter)
             #print(letterNum)
             securityLen = u.getNumLength(breaker + u.getFirstDigits(letterNum, self.securityDigits))
             letterNum = letterNum // (10**securityLen)
             letterNum = de.decrypt(letterNum, self.e, self.p, self.q, self.d, self.N)
+            #print("letterNum: ", letterNum, "\n")
             result += chr(letterNum)
         return result
 
-    def encrypteFile(self):
+    def encryptFile(self, outputName):
         if self.filePathIn == None:
             raise Exception("No File Path Provided!")
         if not os.path.isfile(self.filePathIn):
@@ -87,15 +88,17 @@ class RSAObj(object):
             result = ""
             while True:
                 line = ufile.readline()
-                if line == "":
+                if line == "" or line == "\n":
                     break
                 self.message = line
+                #print(line + "\n")
                 result = result + self.encrypteMess()
         if self.filePathOut == None:
             return result
         else:
             #Process Filename
-            outputName = u.getFileName(self.filePathIn) + "_ENCRYPTED.txt"
+            #outputName = u.getFileName(self.filePathIn) + "_ENCRYPTED.txt"
+            outputName = outputName + "_ENCRYPTED.txt"
             newPath = os.path.join(self.filePathOut, outputName)
             with open(newPath, writeAccess) as fileOut:
                 subsets = result.split(self.delimiter)
@@ -105,7 +108,7 @@ class RSAObj(object):
                     fileOut.write(num + self.delimiter)
                     fileOut.write("\n")
     
-    def decryptFile(self):
+    def decryptFile(self, outputName):
         if self.filePathIn == None:
             raise Exception("No File Path Provided!")
         if not os.path.isfile(self.filePathIn):
@@ -133,8 +136,9 @@ class RSAObj(object):
             return result
         else:
             #Process Filename
-            outputName = u.getFileName(self.filePathIn).split("_")[0] + "_DECRYPTED_FILE.txt"
-            print("\n " + outputName + "\n")
+            #outputName = u.getFileName(self.filePathIn).split("_")[0] + "_DECRYPTED_FILE.txt"
+            outputName = outputName + "_DECRYPTED_FILE.txt"
+            #print("\n " + outputName + "\n")
             newPath = os.path.join(self.filePathOut, outputName)
             with open(newPath, writeAccess) as fileOut:
                 fileOut.writelines(result)
