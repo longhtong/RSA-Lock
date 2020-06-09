@@ -4,6 +4,7 @@ import decryption as de
 import random
 import os
 from egcd import egcd
+from sys import byteorder, getsizeof
 
 LOWERBOUND = 1e259 #RSA-260 
 UPPERBOUND = 9.99999999999999999999999999999999999999999999999999999999999999e259
@@ -44,14 +45,22 @@ class RSAObj(object):
         self.binary = True
 
     def encrypteMess(self):
+        if self.binary:
+            return en.encrypt(int.from_bytes(self.message, byteorder), self.N, self.e)
         result = ""
         breaker = (((self.N % 1000) % self.e) + (self.N * self.e + 662)) % 100      
         for i in self.message:
-            numEn = en.encrypt(ord(i), self.N, self.e)
+            if not self.binary:
+                numIn = ord(i)
+            else:
+                numIn = i
+            numEn = en.encrypt(numIn, self.N, self.e)
             result = result + str(numEn) + str(breaker + u.getFirstDigits(numEn, self.securityDigits)) + self.delimiter 
         return result
 
     def decrypteMess(self):
+        if self.binary:
+            return de.decrypt(int(self.message), self.e, self.p, self.q, self.d, self.N)
         breaker = (((self.N % 1000) % self.e) + (self.N * self.e + 662)) % 100   
         subsets = self.message.split(self.delimiter)
         result = ""
@@ -69,6 +78,63 @@ class RSAObj(object):
             result += chr(letterNum)
         return result
 
+    def encryptBin(self, outputName, fileExt):
+        #need to save data in an array
+        counter = 1
+        with open(self.filePathIn, "rb") as ufile:
+            result = fileExt + "\n"
+            while True:
+                line = ufile.readline()
+                if line == "" or line == "\n" or not line:
+                    break
+                self.message = line
+                #print(line, " ", counter, " \n")
+                result = result + str(getsizeof(self.message)) + "\n" + str(self.encrypteMess()) + "\n"
+                counter += 1
+        if self.filePathOut == None:
+            raise Exception("No file path out found.")
+        #result = bytearray(result)
+        outputName = outputName + "_ENCRYPTED.txt"
+        newPath = os.path.join(self.filePathOut, outputName)
+        with open(newPath, "w") as fileOut:
+            #print(result)
+            fileOut.write(str(result))
+            #fileOut.write("\n")
+    
+    def decryptBin(self, outputName):
+        counter = 1
+        #outputName = outputName + "_DECRYPTED_FILE." + fileExt
+        with open(self.filePathIn, "r") as ufile:
+            result = ""
+            fileExt = ufile.readline()
+            outputName = outputName + "_DECRYPTED_FILE." + fileExt
+            newPath = os.path.join(self.filePathOut, outputName)
+            outFile = open(newPath, "wb")
+            while True:
+                length = ufile.readline()
+                line = ufile.readline()
+                if line == "" or length == "":
+                    break
+                
+                self.message = str(line)
+                #print(type(self.message))
+                toWrite = self.decrypteMess().to_bytes(int(length), byteorder)
+                outFile.write(toWrite)
+            outFile.close()
+                    
+        # if self.filePathOut == None:
+        #     return result
+        # else:
+        #     print(type(result))
+        #     #Process Filename
+        #     #outputName = u.getFileName(self.filePathIn).split("_")[0] + "_DECRYPTED_FILE.txt"
+        #     outputName = outputName + "_DECRYPTED_FILE." + fileExt
+        #     #print("\n " + outputName + "\n")
+        #     newPath = os.path.join(self.filePathOut, outputName)
+        #     with open(newPath, "wb") as fileOut:
+        #         fileOut.writelines(bytes(result))
+        
+
     def encryptFile(self, outputName, fileExt):
         if self.filePathIn == None:
             raise Exception("No File Path Provided!")
@@ -80,33 +146,32 @@ class RSAObj(object):
         readAccess = "r"
         writeAccess = "w"
         if self.binary:
-            readAccess = "rb+"
-            writeAccess = "wb+"
-        
-
-        with open(self.filePathIn, readAccess) as ufile:
-            result = fileExt + "\n"
-            while True:
-                line = ufile.readline()
-                if line == "" or line == "\n":
-                    break
-                self.message = line
-                #print(line + "\n")
-                result = result + self.encrypteMess()
-        if self.filePathOut == None:
-            return result
+            self.encryptBin(outputName, fileExt)
         else:
-            #Process Filename
-            #outputName = u.getFileName(self.filePathIn) + "_ENCRYPTED.txt"
-            outputName = outputName + "_ENCRYPTED.txt"
-            newPath = os.path.join(self.filePathOut, outputName)
-            with open(newPath, writeAccess) as fileOut:
-                subsets = result.split(self.delimiter)
-                for num in subsets:
-                    if num == "":
+        
+            with open(self.filePathIn, readAccess) as ufile:
+                result = fileExt + "\n"
+                while True:
+                    line = ufile.readline()
+                    if line == "" or line == "\n" or not line:
                         break
-                    fileOut.write(num + self.delimiter)
-                    fileOut.write("\n")
+                    self.message = line
+                    #print(line + "\n")
+                    result = result + self.encrypteMess()
+            if self.filePathOut == None:
+                return result
+            else:
+                #Process Filename
+                #outputName = u.getFileName(self.filePathIn) + "_ENCRYPTED.txt"
+                outputName = outputName + "_ENCRYPTED.txt"
+                newPath = os.path.join(self.filePathOut, outputName)
+                with open(newPath, writeAccess) as fileOut:
+                    subsets = result.split(self.delimiter)
+                    for num in subsets:
+                        if num == "":
+                            break
+                        fileOut.write(num + self.delimiter)
+                        fileOut.write("\n")
     
     def decryptFile(self, outputName):
         if self.filePathIn == None:
@@ -119,31 +184,30 @@ class RSAObj(object):
         readAccess = "r"
         writeAccess = "w"
         if self.binary:
-            readAccess = "rb+"
-            writeAccess = "wb+"
-
-        with open(self.filePathIn, readAccess) as ufile:
-            result = ""
-            fileExt = ufile.readline()
-            while True:
-                line = ufile.readline()
-                if line == "":
-                    break
-                self.message = str(line)
-                #print(type(self.message))
-                result = result + self.decrypteMess()
-                
-        if self.filePathOut == None:
-            return result
+            self.decryptBin(outputName)
         else:
-            #Process Filename
-            #outputName = u.getFileName(self.filePathIn).split("_")[0] + "_DECRYPTED_FILE.txt"
-            outputName = outputName + "_DECRYPTED_FILE." + fileExt
-            #print("\n " + outputName + "\n")
-            newPath = os.path.join(self.filePathOut, outputName)
-            with open(newPath, writeAccess) as fileOut:
-                fileOut.writelines(result)
+            with open(self.filePathIn, readAccess) as ufile:
+                result = ""
+                fileExt = ufile.readline()
+                while True:
+                    line = ufile.readline()
+                    if line == "":
+                        break
+                    self.message = str(line)
+                    #print(type(self.message))
+                    result = result + self.decrypteMess()
+                    
+            if self.filePathOut == None:
+                return result
+            else:
+                #Process Filename
+                #outputName = u.getFileName(self.filePathIn).split("_")[0] + "_DECRYPTED_FILE.txt"
+                outputName = outputName + "_DECRYPTED_FILE." + fileExt
+                #print("\n " + outputName + "\n")
+                newPath = os.path.join(self.filePathOut, outputName)
+                with open(newPath, writeAccess) as fileOut:
+                    fileOut.writelines(result)
 
-
+    
 
 
