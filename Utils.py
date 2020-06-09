@@ -80,7 +80,7 @@ def getFileName(path):
     isTextFile = False
     if ".txt" in fileName:
         isTextFile = True
-    return (fileName.split(".")[0], isTextFile, head.split(tail)[0])
+    return (fileName.split(".")[0], isTextFile, head.split(tail)[0], fileName.split(".")[1])
     #tail.split(".")[0]
   
 

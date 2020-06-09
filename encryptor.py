@@ -137,17 +137,15 @@ def encryptWindow(N = None, e = None, dummy = None):
             layoutMess = [[sg.Multiline(default_text= encryptedMess)]]
             sg.Window('RSA Encryptor', layoutMess).read(close = True)
             
-            
-
         elif event == "Encrypt File":
             pathIn = values["-FileName-"]
-            fileName, isText, pathOut = getFileName(pathIn)
+            fileName, isText, pathOut, fileExt = getFileName(pathIn)
 
             rsaEncrypt.setPathIn(pathIn)
             rsaEncrypt.setPathOut(pathOut)
             if not isText:
                 rsaEncrypt.setBinaryOn()
-            rsaEncrypt.encryptFile(fileName)
+            rsaEncrypt.encryptFile(fileName, fileExt)
 
             layoutMess = [[sg.Text("Encryption Successful!!!")]]
             sg.Window('RSA Encryptor', layoutMess).read(close = True)
@@ -178,7 +176,7 @@ def decryptWindow(N = None, e = None, d = None):
             print("Decrypt FIleHEREEEE: \n")
             print(values["-FileName-"])
             pathIn = values["-FileName-"]
-            fileName, isText, pathOut = getFileName(pathIn)
+            fileName, isText, pathOut, dummy = getFileName(pathIn)
             print(fileName)
             print(isText)
             print(pathOut)

@@ -69,7 +69,7 @@ class RSAObj(object):
             result += chr(letterNum)
         return result
 
-    def encryptFile(self, outputName):
+    def encryptFile(self, outputName, fileExt):
         if self.filePathIn == None:
             raise Exception("No File Path Provided!")
         if not os.path.isfile(self.filePathIn):
@@ -80,12 +80,12 @@ class RSAObj(object):
         readAccess = "r"
         writeAccess = "w"
         if self.binary:
-            readAccess = "r+"
-            writeAccess = "w+"
+            readAccess = "rb+"
+            writeAccess = "wb+"
         
 
         with open(self.filePathIn, readAccess) as ufile:
-            result = ""
+            result = fileExt + "\n"
             while True:
                 line = ufile.readline()
                 if line == "" or line == "\n":
@@ -119,11 +119,12 @@ class RSAObj(object):
         readAccess = "r"
         writeAccess = "w"
         if self.binary:
-            readAccess = "r+"
-            writeAccess = "w+"
+            readAccess = "rb+"
+            writeAccess = "wb+"
 
         with open(self.filePathIn, readAccess) as ufile:
             result = ""
+            fileExt = ufile.readline()
             while True:
                 line = ufile.readline()
                 if line == "":
@@ -137,7 +138,7 @@ class RSAObj(object):
         else:
             #Process Filename
             #outputName = u.getFileName(self.filePathIn).split("_")[0] + "_DECRYPTED_FILE.txt"
-            outputName = outputName + "_DECRYPTED_FILE.txt"
+            outputName = outputName + "_DECRYPTED_FILE." + fileExt
             #print("\n " + outputName + "\n")
             newPath = os.path.join(self.filePathOut, outputName)
             with open(newPath, writeAccess) as fileOut:
