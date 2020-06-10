@@ -13,6 +13,7 @@ class RSAObj(object):
     delimiter = "~"
     securityDigits = 3
     def __init__(self, p = None, q = None, N = None, e = None, d = None):
+        self.secretDictionary = {}
         self.p = p
         self.q = q
         self.N = N
@@ -66,16 +67,21 @@ class RSAObj(object):
         result = ""
         #print(subsets)
         for letter in subsets:
-            if letter == "" or letter == "\n":
+            if letter == "" or letter == "\n" or letter == None:
                 break
             #print(letter)
-            letterNum = int(letter)
-            #print(letterNum)
-            securityLen = u.getNumLength(breaker + u.getFirstDigits(letterNum, self.securityDigits))
-            letterNum = letterNum // (10**securityLen)
-            letterNum = de.decrypt(letterNum, self.e, self.p, self.q, self.d, self.N)
-            #print("letterNum: ", letterNum, "\n")
-            result += chr(letterNum)
+            if letter in self.secretDictionary:
+                result += chr(self.secretDictionary[letter])
+            else:
+                letterNum = int(letter)
+                #print(letterNum)
+                securityLen = u.getNumLength(breaker + u.getFirstDigits(letterNum, self.securityDigits))
+                letterNum = letterNum // (10**securityLen)
+                letterNum = de.decrypt(letterNum, self.e, self.p, self.q, self.d, self.N)
+                #print("letterNum: ", letterNum, "\n")
+                result += chr(letterNum)
+
+                self.secretDictionary[letter] = letterNum
         return result
 
     def encryptBin(self, outputName, fileExt):

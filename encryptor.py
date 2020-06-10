@@ -94,25 +94,23 @@ def newUserWindow():
         nextAction = decryptWindow
     else:
         window.close()
-
-    layout1 = [[sg.Text("Would you like to use your newly generated keys?")],
-                [sg.B("Yes"), sg.B("No")]]
-    window1 = sg.Window('RSA Encryptor', layout1)
-    event, values = window1.read()
-    if event == "Yes":
-        window.close() 
-        window1.close()         
-        nextAction(rsaNew.getN(), rsaNew.getE(), rsaNew.getD())
-        print("YES and window and popup closed")
-    elif event == "No":
-        window.close() 
-        window1.close() 
-        encryptStartingWindow()
-        #nextAction()
-        print("NO and window and popup closed")
-    elif event == sg.WIN_CLOSED or event == 'Exit':
-        window.close() 
-        window1.close() 
+    if nextAction is not None:
+        layout1 = [[sg.Text("Would you like to use your newly generated keys?")],
+                    [sg.B("Yes"), sg.B("No")]]
+        window1 = sg.Window('RSA Encryptor', layout1)
+        event, values = window1.read()
+        if event == "Yes":
+            window.close() 
+            window1.close()         
+            nextAction(rsaNew.getN(), rsaNew.getE(), rsaNew.getD())
+        elif event == "No":
+            window.close() 
+            window1.close() 
+            encryptStartingWindow()
+            
+        elif event == sg.WIN_CLOSED or event == 'Exit':
+            window.close() 
+            window1.close() 
     
     
 def encryptWindow(N = None, e = None, dummy = None):
