@@ -90,5 +90,5 @@ def TestNoneText():
 #Test1()
 #testEncryptFile()
 #RSAFileTest()
-#Test2()
-TestNoneText()
+Test2()
+#TestNoneText()
