@@ -44,7 +44,8 @@ class RSAObj(object):
         self.filePathOut = path
     def setBinaryOn(self):
         self.binary = True
-
+    def clearDictionaries(self):
+        self.secretDictionary.clear()
     def encrypteMess(self):
         if self.binary:
             return en.encrypt(int.from_bytes(self.message, byteorder), self.N, self.e)

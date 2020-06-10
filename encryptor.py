@@ -12,12 +12,12 @@ def main():
 
     while True:  # Event Loop
         event, values = window.read()
-        print(event, values)
+        
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
         if event == 'Encrypt':
             # change the "output" element to be the value of "input" element
-            print("Encryption")
+            
             encryptStartingWindow()
         elif event == 'New User':
             newUserWindow()
@@ -36,16 +36,12 @@ def encryptStartingWindow():
 
     while True:
         event, values = window.read()
-        print(event, values)
+        
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
         if event == 'Submit':
-            #save the info
-            #open another window for encryption
             N = values["-N-"]
             e = values["-e-"]
-            # print(N, "RSA  \n")
-            # print(e,"e \n")
             window.close()
             encryptWindow(int(N), int(e))
             
@@ -61,7 +57,7 @@ def decryptStartingWindow():
 
     while True:
         event, values = window.read()
-        print(event, values)
+
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
         if event == 'Submit':
@@ -127,6 +123,7 @@ def encryptWindow(N = None, e = None, dummy = None):
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED or event == 'Exit':
+            rsaEncrypt.clearDictionaries()
             window.close()
             break
         if event == "Encrypt Message":
@@ -162,6 +159,7 @@ def decryptWindow(N = None, e = None, d = None):
     while True:
         event, values = window.read()
         if event == sg.WIN_CLOSED or event == 'Exit':
+            rsaDecrypt.clearDictionaries()
             window.close()
             break
         if event == "Decrypt Message":
@@ -171,13 +169,10 @@ def decryptWindow(N = None, e = None, d = None):
             sg.Window('RSA Encryptor', layoutMess).read(close = True)
 
         elif event == "Decrypt File":
-            print("Decrypt FIleHEREEEE: \n")
-            print(values["-FileName-"])
+            
             pathIn = values["-FileName-"]
             fileName, isText, pathOut, dummy = getFileName(pathIn)
-            print(fileName)
-            print(isText)
-            print(pathOut)
+            
             rsaDecrypt.setPathIn(pathIn)
             rsaDecrypt.setPathOut(pathOut)
             if not isText:
