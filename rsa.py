@@ -151,13 +151,11 @@ class RSAObj(object):
                     if line == '':
                         break
                     self.message = line
-                    #print(line + "\n")
                     result = result + self.encrypteMess()
             if self.filePathOut == None:
                 return result
             else:
                 #Process Filename
-                #outputName = u.getFileName(self.filePathIn) + "_ENCRYPTED.txt"
                 outputName = outputName + "_ENCRYPTED.txt"
                 newPath = os.path.join(self.filePathOut, outputName)
                 with open(newPath, writeAccess) as fileOut:
@@ -189,16 +187,13 @@ class RSAObj(object):
                     if line == '':
                         break
                     self.message = str(line)
-                    #print(type(self.message))
                     result = result + self.decrypteMess()
                     
             if self.filePathOut == None:
                 return result
             else:
                 #Process Filename
-                #outputName = u.getFileName(self.filePathIn).split("_")[0] + "_DECRYPTED_FILE.txt"
-                outputName = outputName + "_DECRYPTED_FILE." + fileExt
-                #print("\n " + outputName + "\n")
+                outputName = outputName + "_DECRYPTED_FILE"# + fileExt
                 newPath = os.path.join(self.filePathOut, outputName)
                 with open(newPath, writeAccess) as fileOut:
                     fileOut.writelines(result)
